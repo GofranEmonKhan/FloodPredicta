@@ -1,0 +1,13 @@
+# Python & Jupyter artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Legacy local unversioned v1 binary folders
+Model/
+Model Deployment/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
