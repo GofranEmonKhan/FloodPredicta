@@ -8,6 +8,9 @@ __pycache__/
 Model/
 Model Deployment/
 
+# Local reproduction scripts (kept local, excluded from GitHub)
+version2/src/
+
 # OS artifacts
 .DS_Store
 Thumbs.db
