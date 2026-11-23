@@ -223,12 +223,6 @@ FloodPredicta/
     │   ├── split_chronological_70_15_15/      # 20 standalone plots (4 plots × 5 models)
     │   └── split_chronological_70_20_10/      # 20 standalone plots (4 plots × 5 models)
     │
-    ├── src/                                   # Standalone execution & pipeline reproduction scripts
-    │   ├── create_and_run_nb01.py             # Preprocessing execution runner
-    │   ├── create_and_run_nb02.py             # Feature engineering execution runner
-    │   ├── build_individual_model_notebooks.py# Shuffled model generator
-    │   └── rebuild_and_preserve_all_splits.py # Chronological pipeline generator
-    │
     └── deployment/                            # Production deployment workspace
 ```
 
@@ -253,24 +247,17 @@ source venv/bin/activate
 pip install numpy pandas scikit-learn xgboost scipy matplotlib seaborn joblib jupyter
 ```
 
-### 2. Reproduce Version 2.0 Pipelines
-Execute the complete non-destructive data preparation and feature engineering:
-```bash
-# Run non-destructive preprocessing (preserves 100% of flood events)
-python version2/src/create_and_run_nb01.py
-
-# Run catchment hydrological feature engineering
-python version2/src/create_and_run_nb02.py
-
-# Reproduce all models and standalone plots across all chronological regimes
-python version2/src/rebuild_and_preserve_all_splits.py
-```
-
-### 3. Explore Interactive Notebooks
-Launch Jupyter to inspect executed notebooks with rendered plots and tuning tables:
+### 2. Launch Jupyter & Run Notebooks
+Launch Jupyter to explore or re-run any stage of the pipeline:
 ```bash
 jupyter notebook version2/notebooks/
 ```
+
+### 3. Execution Pipeline Sequence
+All notebooks are self-contained. Execute them in sequential order:
+1. **Data Preprocessing:** Run `version2/notebooks/data_preprocessing.ipynb` to generate `flood_data_preprocessed.csv` from raw climate observations with 100% flood event preservation.
+2. **Feature Engineering:** Run `version2/notebooks/feature_engineering.ipynb` to calculate antecedent precipitation lags, monsoonal rolling accumulation, and runoff ratios into `flood_data_featured.csv`.
+3. **Model Training & Evaluation:** Run any model notebook inside `version2/notebooks/split_.../` (e.g. `train_xgboost.ipynb` or `train_stacking_ensemble.ipynb`) to train the model, tune validation thresholds, and export diagnostic plots.
 
 ---
 

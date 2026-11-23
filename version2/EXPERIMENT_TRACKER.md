@@ -189,10 +189,5 @@ version2/
 │   ├── split_shuffled_70_15_15/              # 20 standalone plots (4 plots × 5 models)
 │   ├── split_chronological_70_15_15/         # 20 standalone plots (4 plots × 5 models)
 │   └── split_chronological_70_20_10/         # 20 standalone plots (4 plots × 5 models)
-├── src/
-│   ├── create_and_run_nb01.py                # Preprocessing runner
-│   ├── create_and_run_nb02.py                # Feature engineering runner
-│   ├── build_individual_model_notebooks.py   # Shuffled models generator & executor
-│   └── rebuild_and_preserve_all_splits.py    # Chronological generator for both regimes
 └── deployment/                               # Prepared for production serving
 ```
