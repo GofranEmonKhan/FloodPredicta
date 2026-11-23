@@ -1,7 +1,7 @@
 # FloodPredicta (Version 2.0): System Redesign & Strategic Experiment Plan
 
 **Workspace:** `d:\Users\Abdul Gofran Emon\Downloads\FloodPredicta\version2`  
-**Status:** Architecture & Planning Phase (Implementation On Hold Pending Review)  
+**Status:** Completed & Production Deployed (Pipelines, Benchmarks, Diagnostic Reports & Interactive Web App)  
 **Target:** Flood Prediction and Early Warning across 33 Bangladesh Meteorological Stations  
 
 ---
@@ -116,59 +116,82 @@ Based on the dataset's characteristics (**tabular, high-dimensional mixed catego
 
 ---
 
-## 5. Notebook Pipeline Architecture (Planned)
+## 5. Notebook Pipeline Architecture & Implemented Notebooks
 
-In accordance with project requirements, the experimental workflow in `version2/notebooks/` will be structured across dedicated Jupyter Notebooks:
+The experimental workflow in `version2/notebooks/` is structured across dedicated, self-contained Jupyter Notebooks:
 
-### 📔 `01_eda_and_data_cleaning.ipynb`
-- Ingests `data/raw/flooddata.csv`.
+### 📔 `data_preprocessing.ipynb`
+- Ingests `data/raw/flooddata.csv` (20,544 rows × 19 columns).
 - Missing value audit & historical validation of `Flood?` target imputation.
-- Non-destructive extreme value analysis (replacing 5-pass IQR row dropping with percentile winsorization / robust scaling).
-- Exports `data/processed/flood_cleaned.csv`.
+- Non-destructive extreme value analysis: replaces 5-pass IQR row dropping with 99th-percentile winsorization and log transforms.
+- **100% disaster preservation:** Retains all 4,132 historical flood events.
+- Exports `data/processed/flood_data_preprocessed.csv` (20,544 rows × 20 columns).
 
-### 📔 `02_hydrological_feature_engineering.ipynb`
+### 📔 `feature_engineering.ipynb`
 - Chronological sorting per meteorological station.
-- Computes Lag-1, Lag-2 rainfall, and 3-month rolling monsoonal sums.
-- Computes hydrological runoff risk ratios ($\frac{\text{Rain}}{\text{ALT}}$) and moisture interaction indices.
-- Cyclical transformation of temporal coordinates.
-- Exports `data/processed/flood_featured.csv`.
+- Computes Lag-1 and Lag-2 rainfall, and 3-month rolling monsoonal rainfall sums.
+- Computes hydrological runoff risk ratios ($\frac{\text{Rainfall}}{\text{ALT} + 1}$) and atmospheric moisture interaction indices.
+- Cyclical Fourier transformations of temporal coordinates ($\sin, \cos$).
+- One-hot encodes 33 BMD stations with baseline reference column dropped.
+- Exports `data/processed/flood_data_featured.csv` (20,544 rows × 64 columns).
 
-### 📔 `03_model_training_and_tuning.ipynb`
-- Chronological train/validation/test partitioning.
-- Training and Optuna hyperparameter optimization for:
-  1. CatBoost Classifier
-  2. LightGBM Classifier
-  3. Optimized XGBoost
-  4. Balanced Random Forest
-- Construction of Model 5 (Stacking Meta-Ensemble).
-- Serializes trained model pipelines into `models/`.
+### 📔 `split_shuffled_70_15_15/` (Regime 1: Stratified Shuffled 70/15/15)
+- 5 self-contained training notebooks: XGBoost, HistGradientBoosting, Random Forest, Extra Trees, and Stacking Meta-Ensemble.
+- Stratified validation threshold optimization ($t \in [0.10, 0.85]$).
+- Exports serialized models to `models/split_shuffled_70_15_15/` and 20 standalone diagnostic charts to `reports/split_shuffled_70_15_15/`.
 
-### 📔 `04_evaluation_and_threshold_tuning.ipynb`
-- Comprehensive comparative performance matrix (Accuracy, Precision, Recall, F1, ROC-AUC, PR-AUC).
-- Precision-Recall curves and operational early-warning threshold tuning ($t \in [0.10, 0.90]$).
-- SHAP (SHapley Additive exPlanations) global and local feature importance analysis.
-- Exports publication-ready charts to `reports/`.
+### 📔 `split_chronological_70_15_15/` (Regime 2: Chronological Split A)
+- 5 self-contained training notebooks: Train $\le 2003$, Val $2004–2008$, Test $\ge 2009$.
+- Walk-forward validation threshold calibration preventing lookahead leakage.
+- Exports serialized models to `models/split_chronological_70_15_15/` and 20 standalone diagnostic charts to `reports/split_chronological_70_15_15/`.
+
+### 📔 `split_chronological_70_20_10/` (Regime 3: Chronological Split B)
+- 5 self-contained training notebooks: Train $\le 1997$, Val $1998–2008$, Test $\ge 2009$.
+- Strict historical baseline with 20% validation tuning window.
+- Exports serialized models to `models/split_chronological_70_20_10/` and 20 standalone diagnostic charts to `reports/split_chronological_70_20_10/`.
 
 ---
 
-## 6. Directory Structure Created
+## 6. Directory Structure
 
-```
+```text
 version2/
 ├── README.md                                 # Master strategic plan & architecture
+├── EXPERIMENT_TRACKER.md                     # Comprehensive experiment chronicle & threshold audit
 ├── data/
 │   ├── raw/
-│   │   └── flooddata.csv                     # Copied pristine raw dataset (20,544 rows)
-│   └── processed/                            # (Awaiting Notebook 01/02 outputs)
-├── notebooks/                                # (Awaiting creation of structured notebooks)
-│   ├── 01_eda_and_data_cleaning.ipynb
-│   ├── 02_hydrological_feature_engineering.ipynb
-│   ├── 03_model_training_and_tuning.ipynb
-│   └── 04_evaluation_and_threshold_tuning.ipynb
-├── src/                                      # Reusable Python modules & data loaders
-├── models/                                   # Exported model artifacts & scalers
-├── reports/                                  # Evaluation charts, confusion matrices, metrics
-└── deployment/                               # Production Flask / Streamlit deployment code
+│   │   └── flooddata.csv                     # Preserved raw BMD climate dataset (20,544 rows)
+│   └── processed/
+│       ├── flood_data_preprocessed.csv       # 100% flood preserved (20,544 rows × 20 cols)
+│       └── flood_data_featured.csv           # Engineered features (20,544 rows × 64 cols)
+├── notebooks/
+│   ├── data_preprocessing.ipynb             # Common data cleaning & winsorization
+│   ├── feature_engineering.ipynb            # Common hydrological lags & features
+│   ├── split_shuffled_70_15_15/              # Regime 1: Stratified Shuffled Split (5 notebooks)
+│   ├── split_chronological_70_15_15/         # Regime 2: Chronological Split A (5 notebooks)
+│   └── split_chronological_70_20_10/         # Regime 3: Chronological Split B (5 notebooks)
+├── models/
+│   ├── split_shuffled_70_15_15/              # 5 trained models + feature_columns.pkl
+│   ├── split_chronological_70_15_15/         # 5 trained models + feature_columns.pkl
+│   └── split_chronological_70_20_10/         # 5 trained models + feature_columns.pkl
+├── reports/
+│   ├── split_shuffled_70_15_15/              # 20 standalone diagnostic plots
+│   ├── split_chronological_70_15_15/         # 20 standalone diagnostic plots
+│   └── split_chronological_70_20_10/         # 20 standalone diagnostic plots
+└── deployment/                               # Production Web Application & Serving API
+    ├── app.py                                # Flask web application & REST API
+    ├── predictor.py                          # 59-feature zero-defect runtime inference engine
+    ├── station_metadata.json                 # Precomputed geo-coordinates & precipitation baselines
+    ├── templates/
+    │   └── index.html                        # River-themed single-page responsive dashboard
+    ├── static/
+    │   ├── css/style.css                     # Lush greenery & moonlit river night mode styles
+    │   └── js/
+    │       ├── app.js                        # Dynamic UI, gauge animator & scenario presets
+    │       ├── i18n.js                       # Bangladesh-context bilingual engine (EN / বাংলা)
+    │       └── audio.js                      # Procedural Web Audio API river soundscape
+    └── tests/
+        └── test_predictor.py                 # Automated unit tests for inference engine
 ```
 
 ---
@@ -176,7 +199,43 @@ version2/
 ## 7. Current Project State
 
 - [x] Version 1 intact and preserved in parent directory.
-- [x] Version 2 directory structure initialized.
-- [x] Raw dataset copied to `version2/data/raw/flooddata.csv`.
-- [x] Strategic architecture, flaw analysis, and 5-model selection documented.
-- [ ] **Implementation Phase:** On hold pending user confirmation.
+- [x] Non-destructive data cleaning and hydrological feature engineering completed with 100% disaster event preservation.
+- [x] 15 self-contained notebooks executed across 3 rigorous partitioning regimes.
+- [x] 15 model pipelines serialized and saved with feature schemas.
+- [x] 60 standalone publication-ready diagnostic charts exported to `version2/reports/`.
+- [x] Production web application deployed in `version2/deployment/` with Flask, zero-defect predictor, Bangladeshi river greenery UI, day/night mode, procedural delta audio, bilingual engine, and emergency contacts.
+
+---
+
+## 8. Production Web Application & Serving Architecture
+
+The production application is located in `version2/deployment/` and delivers a complete, user-centric disaster monitoring dashboard tailored to Bangladesh's hydrological landscape.
+
+### Key Capabilities
+* **Interactive Single-Page Application (SPA):** Clean, modern interface styled with an animated SVG river delta backdrop, smooth glassmorphism cards, and an interactive speedometer risk gauge.
+* **Day & Night Riverine Theme:**
+  * *Day Mode:* Inspired by lush monsoon riverbanks, fertile silt plains, and emerald paddy fields.
+  * *Night Mode:* Inspired by moonlit midnight rivers, deep delta indigo, and luminous emerald accents.
+* **Calming River Ambient Audio:** Procedural, synthesized river water flow and gentle water ripples generated natively via the Web Audio API (zero external audio file dependencies). Can be toggled on/off at any time.
+* **Authentic Bilingual Localization (English & বাংলা):** Thoughtfully adapted to Bangladeshi meteorological and disaster-management terminology (e.g., *বন্যা পূর্বাভাস ও সতর্কীকরণ ব্যবস্থা*, *অতি প্রবল বন্যা ঝুঁকি*, *হাওর ও নিম্নাঞ্চল প্লাবন*).
+* **Bangladesh Emergency Helplines:** Quick-access direct-dial cards for national emergency services:
+  * **999** — National Emergency Service
+  * **1090** — Disaster Early Warning Helpline
+  * **333** — Government Information & Citizen Services
+  * **16263** — National Health Call Center
+  * **BWDB FFWC** — Flood Forecasting and Warning Centre
+* **Historical Scenario Presets:** One-click preloads for historical test scenarios:
+  * *1998 Deluge:* Catastrophic mega-flood conditions at Dhaka station.
+  * *2022 Sylhet Flash Flood:* Extreme mountain runoff and flash flood pooling in the Surma-Kushiyara basin.
+  * *Dry Winter Season:* Typical peaceful winter baseline with zero flood risk.
+* **REST API:**
+  * `POST /api/predict`: Ingests weather observations, computes all 59 hydrological features, and returns flood probability, binary decision, risk tier, and warning advisory.
+  * `GET /api/stations`: Returns metadata and historical monthly rainfall averages for all 33 BMD stations.
+  * `GET /api/health`: Health status and loaded model details.
+
+### Launch Instructions
+```bash
+# From repository root
+python version2/deployment/app.py
+```
+Access the application at `http://127.0.0.1:5000` in any modern web browser.

@@ -3,7 +3,7 @@
 **File Location:** `version2/EXPERIMENT_TRACKER.md`  
 **Purpose:** Living chronicle of all engineering steps, scientific decisions, data transformations, and model evaluations conducted in Version 2.0. This serves as the single source of truth for downstream global documentation.  
 **Last Updated:** November 2026  
-**Current Milestone:** Step 3 Completed — Triple Partitioning Regimes (Shuffled 70/15/15, Chronological 70/15/15, and Chronological 70/20/10)  
+**Current Milestone:** Production Deployment & Web Application Completed (Interactive Riverine SPA, Bilingual Engine, Day/Night Mode, BD Helplines)  
 
 ---
 
@@ -189,5 +189,18 @@ version2/
 │   ├── split_shuffled_70_15_15/              # 20 standalone plots (4 plots × 5 models)
 │   ├── split_chronological_70_15_15/         # 20 standalone plots (4 plots × 5 models)
 │   └── split_chronological_70_20_10/         # 20 standalone plots (4 plots × 5 models)
-└── deployment/                               # Prepared for production serving
+└── deployment/                               # Interactive Web Application & Serving API
+    ├── app.py                                # Flask web application & REST API
+    ├── predictor.py                          # 59-feature zero-defect runtime inference engine
+    ├── station_metadata.json                 # Precomputed geo-coordinates & precipitation baselines
+    ├── templates/
+    │   └── index.html                        # River-themed single-page responsive dashboard
+    ├── static/
+    │   ├── css/style.css                     # Lush greenery & moonlit river night mode styles
+    │   └── js/
+    │       ├── app.js                        # Dynamic UI, gauge animator & scenario presets
+    │       ├── i18n.js                       # Bangladesh-context bilingual engine (EN / বাংলা)
+    │       └── audio.js                      # Procedural Web Audio API river soundscape
+    └── tests/
+        └── test_predictor.py                 # Automated unit tests for inference engine
 ```

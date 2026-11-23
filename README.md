@@ -20,6 +20,7 @@
 [Benchmarks](#-benchmark-results) •
 [Threshold Optimization](#-operational-threshold-optimization) •
 [Visual Reports](#-visual-analytics--model-diagnostics) •
+[Web Application](#-interactive-web-application) •
 [Quickstart](#-quickstart-guide) •
 [Repository Tree](#-repository-architecture)
 
@@ -223,7 +224,20 @@ FloodPredicta/
     │   ├── split_chronological_70_15_15/      # 20 standalone plots (4 plots × 5 models)
     │   └── split_chronological_70_20_10/      # 20 standalone plots (4 plots × 5 models)
     │
-    └── deployment/                            # Production deployment workspace
+    └── deployment/                            # Production Web Application & Serving API
+        ├── app.py                             # Flask web application & REST API
+        ├── predictor.py                       # 59-feature zero-defect runtime inference engine
+        ├── station_metadata.json              # Precomputed geo-coordinates & precipitation baselines
+        ├── templates/                         # Responsive single-page HTML interface
+        │   └── index.html                     # River-themed dashboard with animated backdrop
+        ├── static/                            # Static web assets
+        │   ├── css/style.css                  # Lush delta greenery & moonlit night mode theme
+        │   └── js/
+        │       ├── app.js                     # Dynamic UI controller & scenario presets
+        │       ├── i18n.js                    # Authentic bilingual engine (EN / বাংলা)
+        │       └── audio.js                   # Procedural Web Audio API river soundscape
+        └── tests/
+            └── test_predictor.py              # Automated unit tests for inference engine
 ```
 
 ---
@@ -258,6 +272,32 @@ All notebooks are self-contained. Execute them in sequential order:
 1. **Data Preprocessing:** Run `version2/notebooks/data_preprocessing.ipynb` to generate `flood_data_preprocessed.csv` from raw climate observations with 100% flood event preservation.
 2. **Feature Engineering:** Run `version2/notebooks/feature_engineering.ipynb` to calculate antecedent precipitation lags, monsoonal rolling accumulation, and runoff ratios into `flood_data_featured.csv`.
 3. **Model Training & Evaluation:** Run any model notebook inside `version2/notebooks/split_.../` (e.g., `train_xgboost.ipynb` or `train_stacking_ensemble.ipynb`) to train the model, tune validation thresholds, and export diagnostic plots.
+
+### 4. Run the Production Web Application
+Launch the local web dashboard:
+```bash
+python version2/deployment/app.py
+```
+Open **`http://127.0.0.1:5000`** in your browser to interact with the system, toggle Day/Night modes, listen to the calming procedural river soundscape, explore historical flood scenarios, or submit station climate parameters for real-time risk assessment.
+
+---
+
+## 🌐 Interactive Web Application
+
+FloodPredicta features a production-grade single-page application (SPA) tailored to Bangladesh's riverine delta geography:
+
+* **Delta Greenery & Moonlit Night Modes:** Handcrafted color palettes representing lush riparian greenery during the day and moonlit delta waters at night.
+* **Calming River Ambient Audio:** Synthesizes gentle river flow and water ripples natively using the browser's Web Audio API without streaming external media.
+* **Authentic Bilingual Localization (English & বাংলা):** Thoughtfully localized into authentic Bengali meteorological terminology (e.g., *বন্যা পূর্বাভাস ও সতর্কীকরণ ব্যবস্থা*, *হাওর ও নিম্নাঞ্চল প্লাবন*).
+* **Speedometer Risk Gauge:** Real-time animated SVG gauge that dynamically reflects predicted flood probability and assigns risk tiers (Minimal, Moderate, High, Extreme Catastrophe).
+* **Historical Scenario Presets:** One-click preloads for historical scenarios, including the **1998 Deluge** (Dhaka), **2022 Sylhet Flash Flood**, and a **Dry Winter** baseline.
+* **Bangladesh Emergency Contacts:** Direct-dial integration with national emergency services:
+  * **999** — National Emergency Service
+  * **1090** — Disaster Early Warning Helpline
+  * **333** — Government Information & Citizen Services
+  * **16263** — National Health Call Center
+  * **BWDB FFWC** — Flood Forecasting and Warning Centre
+* **REST API:** Supports programmatic batch or real-time inference via `POST /api/predict`, station metadata retrieval via `GET /api/stations`, and server diagnostics via `GET /api/health`.
 
 ---
 
