@@ -49,6 +49,7 @@ const translations = {
         
         // Panel 2: Assessment
         panel_results_title: "Live Flood Risk Radar & Impact Assessment",
+        panel_results_desc: "Real-time risk scoring and hydrological catchment assessment",
         risk_probability: "Flood Disaster Probability",
         model_badge: "Model Architecture:",
         status_label: "Operational Risk Status:",
@@ -129,6 +130,7 @@ const translations = {
         
         // Panel 2: Assessment
         panel_results_title: "সরাসরি বন্যা ঝুঁকি পরিমাপক ও বিশ্লেষণ",
+        panel_results_desc: "রিয়েল-টাইম পূর্বাভাস ও নদী অববাহিকার সামগ্রিক হাইড্রোলজিক্যাল মূল্যায়ন",
         risk_probability: "বন্যার সম্ভাব্য ঝুঁকি মাত্রা",
         model_badge: "মডেল আর্কিটেকচার:",
         status_label: "বর্তমান সতর্কবার্তা স্তর:",

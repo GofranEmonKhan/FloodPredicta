@@ -187,8 +187,8 @@ function autofillLags() {
 // Preset Scenarios
 function applyPreset(type) {
     if (type === '1998') {
-        // Replicate historic mega-monsoon deluge
-        document.getElementById('stationSelect').value = 'Dhaka';
+        // Replicate historic 1998 Padma-Meghna basin mega-monsoon deluge
+        document.getElementById('stationSelect').value = 'Faridpur';
         document.getElementById('monthSelect').value = '8'; // August
         onStationOrMonthChange();
         document.getElementById('inputRainfall').value = '680';
@@ -291,12 +291,12 @@ function renderAssessmentResults(data) {
     const probEl = document.getElementById('gaugeProbability');
     if (probEl) probEl.textContent = `${probVal}%`;
 
-    // Animate Needle (0 to 180 deg)
+    // Animate Needle along the 180° semi-circle arc (-90deg = 0%, 0deg = 50%, +90deg = 100%)
     const angle = (probVal / 100) * 180 - 90;
-    const needle = document.getElementById('gaugeNeedle');
-    if (needle) {
-        needle.style.transform = `rotate(${angle}deg)`;
-        needle.style.transformOrigin = '100px 95px';
+    const needleGroup = document.getElementById('needleGroup');
+    if (needleGroup) {
+        needleGroup.style.transform = `rotate(${angle}deg)`;
+        needleGroup.style.transformOrigin = '120px 118px';
     }
 
     // Status Badge
@@ -323,11 +323,5 @@ function renderAssessmentResults(data) {
     const advEl = document.getElementById('advisoryText');
     if (advEl) {
         advEl.textContent = currentLang === 'bn' ? data.advisory_bn : data.advisory_en;
-    }
-
-    // Model Info
-    const modelEl = document.getElementById('activeModelName');
-    if (modelEl) {
-        modelEl.textContent = `${data.model_name} (${data.model_regime})`;
     }
 }
