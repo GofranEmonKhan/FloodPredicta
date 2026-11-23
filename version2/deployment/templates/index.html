@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloodPredicta | AI Flood Early Warning System (বাংলাদেশ)</title>
+    <!-- Google Fonts for Bengali & English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- Background Meandering River & Greenery Silhouette -->
+    <div class="river-backdrop">
+        <svg viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#047857" fill-opacity="0.18" d="M0,192L48,208C96,224,192,256,288,245.3C384,235,480,181,576,165.3C672,149,768,171,864,192C960,213,1056,235,1152,213.3C1248,192,1344,128,1392,96L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            <path fill="#0284c7" fill-opacity="0.25" d="M0,256L48,245.3C96,235,192,213,288,208C384,203,480,213,576,229.3C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            <path fill="#10b981" fill-opacity="0.22" d="M0,96L48,122.7C96,149,192,203,288,197.3C384,192,480,128,576,128C672,128,768,192,864,213.3C960,235,1056,213,1152,192C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+
+    <div class="container">
+
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <div class="brand-section">
+                <div class="brand-logo-icon">🌊</div>
+                <div class="brand-titles">
+                    <h1 data-i18n="brand_name">FloodPredicta</h1>
+                    <p data-i18n="brand_tagline">বাংলাদেশের নদী অববাহিকাভিত্তিক বন্যা পূর্বাভাস ও দুর্যোগ ঝুঁকি নিরূপণ ব্যবস্থা</p>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <!-- River Ambient Audio Toggle -->
+                <button id="audioToggleBtn" class="nav-btn audio-btn" title="নদী আবহ সঙ্গীত (Play/Pause River Sounds)">
+                    <span id="audioBtnIcon">🎵</span>
+                    <span id="audioBtnText" data-i18n="audio_off">নদীর আবহ সঙ্গীত: বন্ধ</span>
+                    <div id="soundWaveAnimation" class="sound-waves">
+                        <span></span><span></span><span></span>
+                    </div>
+                </button>
+
+                <!-- Day / Night Mode Toggle -->
+                <button id="themeToggleBtn" class="nav-btn theme-btn" title="Toggle Day/Night Mode">
+                    <span id="themeIcon">☀️</span>
+                    <span id="themeBtnText" data-i18n="day_mode">দিনের মোড</span>
+                </button>
+
+                <!-- Language Toggle -->
+                <button id="langToggleBtn" class="nav-btn lang-btn" title="Switch Language">
+                    <span>🌐</span>
+                    <span id="langBtnText">English</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Split Grid -->
+        <main class="dashboard-grid">
+
+            <!-- Left Panel: Input Form -->
+            <section class="dash-card">
+                <h2 data-i18n="panel_inputs_title">জলবায়ু ও আবহাওয়া স্টেশন পরিমাপক</h2>
+                <p class="card-desc" data-i18n="panel_inputs_desc">আবহাওয়া স্টেশন ও মাস নির্বাচন করুন অথবা ঐতিহাসিক বন্যার পূর্বনির্ধারিত পরিস্থিতি পরীক্ষা করুন।</p>
+
+                <!-- Preset Scenarios -->
+                <div class="presets-container">
+                    <label data-i18n="presets_label">ঐতিহাসিক পরিস্থিতির উদাহরণ:</label>
+                    <div class="presets-list">
+                        <button type="button" id="preset1998" class="preset-chip" data-i18n="preset_1998">🌊 ১৯৯৮ ঐতিহাসিক মহাবন্যা</button>
+                        <button type="button" id="presetSylhet" class="preset-chip" data-i18n="preset_sylhet">🌧️ সিলেট-সুনামগঞ্জ হাওর প্লাবন</button>
+                        <button type="button" id="presetWinter" class="preset-chip" data-i18n="preset_winter">☀️ শুষ্ক শীতকাল (জানুয়ারি)</button>
+                    </div>
+                </div>
+
+                <form id="predictionForm">
+                    <!-- Station Selection -->
+                    <div class="form-group">
+                        <label for="stationSelect" data-i18n="station_label">বাংলাদেশ আবহাওয়া অধিদপ্তর স্টেশন:</label>
+                        <select id="stationSelect" class="form-control" required>
+                            <!-- Populated dynamically via JS -->
+                        </select>
+                        <div class="station-micro-meta">
+                            <span><strong data-i18n="station_meta_alt">উচ্চতা:</strong> <span id="stationAlt">--</span></span>
+                            <span><strong data-i18n="station_meta_coords">স্থানাঙ্ক:</strong> <span id="stationCoords">--</span></span>
+                        </div>
+                    </div>
+
+                    <!-- Month Selection -->
+                    <div class="form-group">
+                        <label for="monthSelect" data-i18n="month_label">মাস ও ঋতু:</label>
+                        <select id="monthSelect" class="form-control" required>
+                            <!-- Populated dynamically via JS -->
+                        </select>
+                    </div>
+
+                    <!-- Current Rainfall -->
+                    <div class="form-group">
+                        <label for="inputRainfall" data-i18n="rainfall_label">বর্তমান মাসের বৃষ্টিপাত (মিলিমিটার):</label>
+                        <input type="number" step="any" min="0" max="2500" id="inputRainfall" class="form-control" value="380" required>
+                        <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 4px;">
+                            <span data-i18n="rainfall_hint">এই স্টেশনের সাধারণ মাসিক স্বাভাবিক বৃষ্টিপাত:</span> 
+                            <strong id="rainfallNormalVal" style="color: var(--accent-river);">350 mm</strong>
+                        </small>
+                    </div>
+
+                    <!-- Antecedent Rainfall Lags Drawer -->
+                    <div class="lags-card">
+                        <div class="lags-header">
+                            <h4 data-i18n="lags_toggle_title">পূর্ববর্তী ২ মাসের বৃষ্টিপাত ও মাটির আর্দ্রতা সূচক (Lags):</h4>
+                            <button type="button" id="btnAutofillLags" class="btn-autofill" data-i18n="lags_autofill_btn">স্বাভাবিক মান বসান</button>
+                        </div>
+                        <div class="lags-grid">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="inputLag1" style="font-size: 0.8rem;" data-i18n="lag1_label">পূর্ববর্তী ১ম মাস (Lag-1, মিমি):</label>
+                                <input type="number" step="any" min="0" max="2500" id="inputLag1" class="form-control" value="320">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="inputLag2" style="font-size: 0.8rem;" data-i18n="lag2_label">পূর্ববর্তী ২য় মাস (Lag-2, মিমি):</label>
+                                <input type="number" step="any" min="0" max="2500" id="inputLag2" class="form-control" value="260">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Atmospheric Grid -->
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;" data-i18n="weather_grid_title">বায়ুমণ্ডলীয় ও তাপমাত্রার সূচকসমূহ:</label>
+                    <div class="weather-grid">
+                        <div class="form-group">
+                            <label for="inputMaxTemp" style="font-size: 0.78rem;" data-i18n="max_temp_label">সর্বোচ্চ তাপা (°সে):</label>
+                            <input type="number" step="any" id="inputMaxTemp" class="form-control" value="32.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputMinTemp" style="font-size: 0.78rem;" data-i18n="min_temp_label">সর্বনিম্ন তাপা (°সে):</label>
+                            <input type="number" step="any" id="inputMinTemp" class="form-control" value="25.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputHumidity" style="font-size: 0.78rem;" data-i18n="humidity_label">আর্দ্রতা (%):</label>
+                            <input type="number" step="any" min="0" max="100" id="inputHumidity" class="form-control" value="86" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputWind" style="font-size: 0.78rem;" data-i18n="wind_label">বাতাস (মি/সে):</label>
+                            <input type="number" step="any" min="0" id="inputWind" class="form-control" value="1.8" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputCloud" style="font-size: 0.78rem;" data-i18n="cloud_label">মেঘ (০-৮):</label>
+                            <input type="number" step="any" min="0" max="8" id="inputCloud" class="form-control" value="6.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputSun" style="font-size: 0.78rem;" data-i18n="sun_label">সূর্য (ঘণ্টা):</label>
+                            <input type="number" step="any" min="0" max="14" id="inputSun" class="form-control" value="4.2" required>
+                        </div>
+                    </div>
+
+                    <!-- Operational Mode Selection -->
+                    <div class="form-group">
+                        <label data-i18n="mode_label">সিদ্ধান্ত গ্রহণের সতর্কতা মোড:</label>
+                        <div class="mode-toggle-group">
+                            <label class="mode-radio-label">
+                                <input type="radio" name="thresholdMode" value="balanced" checked>
+                                <span data-i18n="mode_balanced">⚖️ সুষম মোড (কাট-অফ ০.৫০ - সর্বোত্তম নির্ভুলতা ও ভারসাম্য)</span>
+                            </label>
+                            <label class="mode-radio-label">
+                                <input type="radio" name="thresholdMode" value="alert">
+                                <span data-i18n="mode_alert">🚨 জীবন-রক্ষা জরুরি মোড (কাট-অফ ০.৩৫ - সর্বোচ্চ ৯৮%+ শনাক্তকরণ)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="btnSubmit" class="btn-submit">
+                        <span>🔍</span>
+                        <span id="btnSubmitText" data-i18n="btn_predict">বন্যার ঝুঁকি নিরূপণ করুন</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Right Panel: Live Assessment & Radar -->
+            <section class="dash-card">
+                <h2 data-i18n="panel_results_title">সরাসরি বন্যা ঝুঁকি পরিমাপক ও বিশ্লেষণ</h2>
+                <p class="card-desc" style="display: flex; justify-content: space-between;">
+                    <span data-i18n="model_badge">মডেল আর্কিটেকচার:</span>
+                    <strong id="activeModelName" style="color: var(--accent-river);">XGBOOST (CHRONOLOGICAL)</strong>
+                </p>
+
+                <!-- Initial Empty State -->
+                <div id="emptyStateBox" class="empty-state">
+                    <div class="empty-state-icon">🛰️</div>
+                    <h3 data-i18n="empty_state_title">বিশ্লেষণের জন্য প্রস্তুত</h3>
+                    <p data-i18n="empty_state_desc">বাম পাশের প্যানেলে আবহাওয়ার তথ্য প্রদান করে 'বন্যার ঝুঁকি নিরূপণ করুন' বোতামে চাপ দিন।</p>
+                </div>
+
+                <!-- Active Results Container (hidden initially) -->
+                <div id="resultsActiveBox" style="display: none;">
+                    <div class="radar-box">
+                        <!-- SVG Semi-circle Speedometer Gauge -->
+                        <div class="gauge-svg-container">
+                            <svg viewBox="0 0 200 110">
+                                <!-- Background Arc (Green to Red gradient) -->
+                                <defs>
+                                    <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#10b981" />
+                                        <stop offset="35%" stop-color="#eab308" />
+                                        <stop offset="70%" stop-color="#f97316" />
+                                        <stop offset="100%" stop-color="#ef4444" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M 20 95 A 80 80 0 0 1 180 95" fill="none" stroke="#e2e8f0" stroke-width="18" stroke-linecap="round"/>
+                                <path d="M 20 95 A 80 80 0 0 1 180 95" fill="none" stroke="url(#gaugeGrad)" stroke-width="18" stroke-linecap="round"/>
+                                <!-- Needle -->
+                                <line id="gaugeNeedle" x1="100" y1="95" x2="100" y2="28" stroke="#0f172a" stroke-width="4" stroke-linecap="round" style="transform: rotate(-90deg); transform-origin: 100px 95px; transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1);"/>
+                                <circle cx="100" cy="95" r="8" fill="#0f172a"/>
+                            </svg>
+                            <div class="gauge-val-display">
+                                <div class="percent" id="gaugeProbability">0.0%</div>
+                                <div class="label" data-i18n="risk_probability">বন্যার সম্ভাব্য ঝুঁকি মাত্রা</div>
+                            </div>
+                        </div>
+
+                        <!-- Status Alert Pill -->
+                        <div id="statusPill" class="status-pill">
+                            স্বাভাবিক পরিস্থিতি
+                        </div>
+                    </div>
+
+                    <!-- Hydrological Factors -->
+                    <div class="drivers-box">
+                        <h4>
+                            <span>💧</span>
+                            <span data-i18n="drivers_title">ঝুঁকি বৃদ্ধিকারী মূল জলবায়ু নিয়ামকসমূহ:</span>
+                        </h4>
+                        <div id="driversList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Actionable Advisory Box -->
+                    <div class="advisory-box">
+                        <h4>
+                            <span>📢</span>
+                            <span data-i18n="advisory_title">জরুরি দুর্যোগ ব্যবস্থাপনা ও প্রস্তুতি সংক্রান্ত দিকনির্দেশনা:</span>
+                        </h4>
+                        <p id="advisoryText">
+                            <!-- Populated dynamically via JS -->
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Emergency Helplines Section -->
+        <section class="emergency-section">
+            <div class="emergency-header">
+                <h3 data-i18n="emergency_title">জরুরি সেবা ও জাতীয় দুর্যোগ সহায়তা কেন্দ্র (বাংলাদেশ)</h3>
+                <p data-i18n="emergency_subtitle">সাধারণ নাগরিক, কৃষক, স্থানীয় প্রশাসন ও স্বেচ্ছাসেবকদের জন্য সার্বক্ষণিক জরুরি যোগাযোগ।</p>
+            </div>
+
+            <div class="emergency-grid">
+                <!-- 999 Card -->
+                <div class="emergency-card">
+                    <div>
+                        <h4 data-i18n="hl_999_title">🚨 ৯৯৯ - জাতীয় জরুরি সেবা</h4>
+                        <p data-i18n="hl_999_desc">সার্বক্ষণিক পুলিশ, অ্যাম্বুলেন্স, ফায়ার সার্ভিস এবং উদ্ধার তৎপরতার জন্য জাতীয় জরুরি হটলাইন।</p>
+                    </div>
+                    <a href="tel:999" class="btn-call" data-i18n="call_now">সরাসরি কল করুন (999)</a>
+                </div>
+
+                <!-- 1090 Card -->
+                <div class="emergency-card">
+                    <div>
+                        <h4 data-i18n="hl_1090_title">📻 ১০৯০ - দুর্যোগের আগাম বার্তা</h4>
+                        <p data-i18n="hl_1090_desc">দুর্যোগ ব্যবস্থাপনা ও ত্রাণ মন্ত্রণালয়ের টোল-ফ্রি ভয়েস মেসেজ ও আবহাওয়া পূর্বাভাস সেবা।</p>
+                    </div>
+                    <a href="tel:1090" class="btn-call" data-i18n="call_now">সরাসরি কল করুন (1090)</a>
+                </div>
+
+                <!-- 333 Card -->
+                <div class="emergency-card">
+                    <div>
+                        <h4 data-i18n="hl_333_title">🌾 ৩৩৩ - জাতীয় কল সেন্টার</h4>
+                        <p data-i18n="hl_333_desc">সরকারি জরুরি ত্রাণ সহায়তা, খাদ্য সামগ্রী বণ্টন এবং জেলা প্রশাসনের সাথে তাৎক্ষণিক যোগাযোগ।</p>
+                    </div>
+                    <a href="tel:333" class="btn-call" data-i18n="call_now">সরাসরি কল করুন (333)</a>
+                </div>
+
+                <!-- 16263 Card -->
+                <div class="emergency-card">
+                    <div>
+                        <h4 data-i18n="hl_16263_title">🩺 ১৬২৬৩ - স্বাস্থ্য বাতায়ন</h4>
+                        <p data-i18n="hl_16263_desc">বন্যাজনিত পানিবাহিত রোগ ও জরুরি চিকিৎসার জন্য স্বাস্থ্য মন্ত্রণালয়ের ২৪/৭ টেলিমেডিসিন হটলাইন।</p>
+                    </div>
+                    <a href="tel:16263" class="btn-call" data-i18n="call_now">সরাসরি কল করুন (16263)</a>
+                </div>
+
+                <!-- BWDB FFWC Card -->
+                <div class="emergency-card">
+                    <div>
+                        <h4 data-i18n="hl_ffwc_title">🌊 পাউবো বন্যা সতর্কীকরণ</h4>
+                        <p data-i18n="hl_ffwc_desc">বাংলাদেশ পানি উন্নয়ন বোর্ডের প্রধান নদ-নদীর পানি পরিমাপক ও ৫ দিনের বিস্তারিত প্লাবন চিত্র।</p>
+                    </div>
+                    <a href="http://www.ffwc.gov.bd/" target="_blank" rel="noopener noreferrer" class="btn-call btn-portal" data-i18n="visit_portal">অফিসিয়াল পোর্টাল দেখুন</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p><strong>FloodPredicta v2.0</strong> — Designed for climate resilience, riverine preservation, and disaster preparedness across Bangladesh. 🇧🇩</p>
+            <p style="margin-top: 4px; opacity: 0.75;">Data: Bangladesh Meteorological Department (1948–2013) | Developed with care for the Bengal Delta.</p>
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/audio.js"></script>
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
