@@ -8,7 +8,7 @@
 [![Framework](https://img.shields.io/badge/Toolkit-Pandas%20%7C%20NumPy%20%7C%20SciPy-blueviolet.svg?style=for-the-badge)](https://pandas.pydata.org/)
 [![Evaluation](https://img.shields.io/badge/ROC--AUC-0.9958-brightgreen.svg?style=for-the-badge)](version2/EXPERIMENT_TRACKER.md)
 [![Status](https://img.shields.io/badge/Release-Version%202.0%20(Production)-success.svg?style=for-the-badge)](version2/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![License: Citation Required](https://img.shields.io/badge/License-Citation%20Required-crimson.svg?style=for-the-badge)](LICENSE)
 
 <p align="center">
   <b>A 65-year empirical hydrological study (1948–2013) across 33 Bangladesh Meteorological Department (BMD) weather stations, transforming raw climate observations into actionable, high-recall flood catastrophe alerts without data loss or temporal leakage.</b>
@@ -31,26 +31,26 @@
 
 Bangladesh sits at the confluence of the **Ganges, Brahmaputra, and Meghna (GBM)** river systems, creating the world's most vulnerable delta ecosystem. Over 80% of the landmass consists of low-lying floodplains with altitudes ranging from 2m to 35m above sea level. Severe monsoon deluges frequently inundate large swathes of the country, causing catastrophic displacement, agricultural destruction, and loss of life.
 
-**FloodPredicta** utilizes 65 years of continuous station-level meteorological and spatial measurements (1948–2013; 20,544 monthly observations) across **33 BMD weather stations** to predict impending flood disasters. 
+In this project, we analyzed 65 years of continuous station-level meteorological and spatial measurements (1948–2013; 20,544 monthly records) across **33 BMD weather stations** to predict impending flood disasters in advance.
 
-In **Version 2.0**, the entire analytical pipeline was re-engineered from the ground up to solve extreme data loss, eliminate temporal lookahead bias, introduce catchment hydrology features, and calibrate decision thresholds for real-world disaster management.
+In **Version 2.0**, we completely re-engineered our analytical pipeline from scratch. We resolved the severe data loss from Version 1, eliminated temporal lookahead bias, introduced catchment hydrology features, and calibrated decision thresholds specifically for real-world disaster management.
 
 ---
 
 ## 🚀 Key Features
 
-* **100% Disaster Event Preservation:** Zero row trimming. All **4,132 historical flood events** (including historic 1988, 1998, 2004 mega-floods) are fully preserved using 99th-percentile winsorization instead of destructive outlier filtering.
-* **Catchment Hydrology Features:** Engineers antecedent precipitation lags ($t-1$, $t-2$), 3-month monsoonal rolling cumulative rainfall, and Runoff-Pooling ratios ($\frac{\text{Rainfall}}{\text{ALT} + 1}$).
-* **Leakage-Free Temporal Validation:** Implements walk-forward chronological splits (historical training $\rightarrow$ validation tuning $\rightarrow$ unseen future testing) to guarantee operational out-of-time generalizability.
-* **Operational Threshold Calibration:** Decision thresholds are tuned on the validation set to maximize positive-class disaster $F_1$-score and recall, overcoming Bangladesh's 80:20 non-flood vs. flood class imbalance.
-* **5 Enterprise-Grade Tree Models:** Benchmarks XGBoost, HistGradientBoosting, Random Forest, Extra Trees, and a Stacking Ensemble with Logistic Regression meta-learner.
-* **Standalone Diagnostic Analytics:** Exports independent, publication-ready Confusion Matrices, ROC Curves, Probability Distributions, and Feature Importance bar charts for each model.
+* **100% Disaster Event Preservation:** We did not drop a single flood record. All **4,132 historical flood events** (including the historic 1988, 1998, and 2004 mega-floods) are fully preserved using 99th-percentile winsorization instead of aggressive outlier deletion.
+* **Catchment Hydrology Features:** We engineered antecedent precipitation lags, 3-month monsoonal rolling rainfall, and runoff-to-altitude pooling ratios to reflect physical water accumulation.
+* **Leakage-Free Temporal Validation:** We implemented walk-forward chronological splits (historical training $\rightarrow$ validation tuning $\rightarrow$ unseen future testing) to ensure our models genuinely generalize to future seasons.
+* **Operational Threshold Calibration:** We tuned decision thresholds on our validation set to maximize disaster $F_1$-score and recall, overcoming Bangladesh's 80:20 non-flood vs. flood class imbalance.
+* **5 Enterprise-Grade Tree Models:** We benchmarked XGBoost, HistGradientBoosting, Random Forest, Extra Trees, and a Stacking Ensemble with a Logistic Regression meta-learner.
+* **Standalone Diagnostic Analytics:** We generated independent, publication-ready Confusion Matrices, ROC Curves, Probability Distributions, and Feature Importance bar charts for every model.
 
 ---
 
 ## 🔬 System Evolution: Version 1 vs. Version 2.0
 
-| Component | Version 1 (Baseline Legacy) | Version 2.0 (Redesigned Production) | Scientific Impact in Version 2.0 |
+| Component | Version 1 (Baseline Legacy) | Version 2.0 (Our Redesigned Pipeline) | Scientific Impact in Version 2.0 |
 | :--- | :--- | :--- | :--- |
 | **Outlier Handling** | 5 successive passes of IQR trimming deleting **2,984 records**. | **Non-destructive 99th-percentile winsorization** and log transforms. | **Preserved 1,387 real flood cases** (+33.5% of all disasters) that V1 had discarded as "outliers". |
 | **Data Splitting** | Random 80/20 train/test split across all 65 years. | **Walk-Forward Chronological Splitting** (e.g., Train $\le 1997$, Val $1998–2008$, Test $\ge 2009$). | Eliminates temporal lookahead bias; mimics true future disaster deployment. |
@@ -61,7 +61,7 @@ In **Version 2.0**, the entire analytical pipeline was re-engineered from the gr
 
 > [!IMPORTANT]
 > **Why did Version 1 show a seemingly "higher" 98% accuracy?**  
-> In Version 1, 1,387 severe flood deluges were pruned as "outliers", leaving behind only milder, easier-to-classify samples. When Version 2 is evaluated on the exact same shuffled split with all 4,132 extreme events included, **Version 2 significantly outperforms Version 1** across all detection metrics: **Flood Recall: 0.9774 vs 0.9435**, **Flood F1: 0.9374 vs 0.9241**, and **ROC-AUC: 0.9958 vs 0.9946**.
+> In Version 1, 1,387 severe flood deluges were deleted as "outliers", leaving behind only milder, easier-to-classify samples. When we evaluated Version 2 on the exact same shuffled split with all 4,132 extreme events included, **Version 2 significantly outperforms Version 1** across all detection metrics: **Flood Recall: 0.9774 vs 0.9435**, **Flood F1: 0.9374 vs 0.9241**, and **ROC-AUC: 0.9958 vs 0.9946**.
 
 ---
 
@@ -83,14 +83,14 @@ In **Version 2.0**, the entire analytical pipeline was re-engineered from the gr
 ```
 
 ### 1. Hydrological & Domain Features
-* **Antecedent Rainfall Lags:** $\text{Rainfall\_Lag\_1}$ and $\text{Rainfall\_Lag\_2}$ account for soil moisture retention from preceding months.
-* **Monsoonal Catchment Saturation:** $\text{Rolling\_3M\_Rainfall} = \sum_{k=0}^2 \text{Rainfall}_{t-k}$ models prolonged regional basin accumulation.
-* **Runoff-Pooling Index:**
-  $$\text{Runoff\_Pooling\_Index} = \frac{\text{Rainfall}}{\text{ALT} + 1}$$
-  Measures gravity-driven accumulation risk in low-altitude delta stations (e.g., coastal and haor basins) vs. highland stations.
-* **Atmospheric Moisture Index:** $\text{Relative\_Humidity} \times \text{Cloud\_Coverage}$ captures prolonged atmospheric depressions and depressed evapotranspiration.
-* **Fourier Seasonality Encodings:**
-  $$\sin\left(\frac{2\pi \cdot \text{Month}}{12}\right), \quad \cos\left(\frac{2\pi \cdot \text{Month}}{12}\right), \quad \text{Is\_Monsoon} \in \{0, 1\}$$
+
+Instead of looking at each month in isolation, we engineered features reflecting how real floods occur on the ground:
+
+* **Antecedent Rainfall Lags:** We included rainfall from 1 month ago (Lag-1) and 2 months ago (Lag-2) to account for existing soil moisture before new rain arrives.
+* **Cumulative Monsoonal Saturation:** We computed a 3-month rolling rainfall sum to track prolonged catchment water build-up across river basins.
+* **Runoff-Pooling Index:** We calculated rainfall relative to station altitude to capture how water rapidly accumulates in low-lying delta and haor areas compared to higher ground.
+* **Atmospheric Moisture Index:** We combined relative humidity and cloud coverage to detect persistent monsoon depressions that slow down evaporation.
+* **Cyclical Seasonal Signals:** We converted month numbers into continuous cyclical sine and cosine curves, and added an explicit monsoon indicator (June to September).
 
 ---
 
@@ -287,9 +287,12 @@ If you find this research or code helpful in your academic work or disaster mana
 
 ---
 
-## 📜 License
+## 📜 License & Citation Policy
 
-This project is licensed under the [MIT License](LICENSE) — free for academic, research, and commercial applications.
+This project is licensed under the [FloodPredicta Attribution & Academic Research License](LICENSE).
+
+> [!IMPORTANT]
+> **Mandatory Citation Requirement:** You are welcome to use, explore, and build upon this code and methodology, but **you must give proper attribution and cite this repository and author** in any academic publication, thesis, report, software, or project. Using this project without citation is strictly prohibited.
 
 <div align="center">
   <b>Developed with dedication to climate resilience and disaster mitigation across Bangladesh. 🇧🇩</b>
