@@ -18,7 +18,7 @@
 | **3B. Chronological Split (70/15/15)** | `notebooks/split_chronological_70_15_15/` | ✅ **Completed** | 5 dedicated notebooks executed (Train <= 2003, Val 2004–2008, Test >= 2009) with 4 standalone plots each. |
 | **3C. Chronological Split (70/20/10)** | `notebooks/split_chronological_70_20_10/` | ✅ **Completed** | 5 dedicated notebooks executed (Train <= 1997, Val 1998–2008, Test >= 2009) with 4 standalone plots each. |
 | **4. Visual Reports** | `reports/` (60 standalone plots) | ✅ **Completed** | 20 plots per regime across all 3 partition directories. |
-| **5. Production Deployment** | `deployment/` | ⏳ **Next Up** | Production serving pipeline with verified unit tests. |
+| **5. Production Deployment** | `deployment/` | ✅ **Completed** | Interactive Bengali riverine SPA, bilingual engine, BD emergency helplines & unit tests. |
 
 ---
 
