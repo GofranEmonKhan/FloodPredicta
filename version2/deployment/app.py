@@ -13,6 +13,13 @@ predictor = FloodPredictor(model_regime='split_chronological_70_20_10', model_ty
 def index():
     return render_template('index.html')
 
+@app.after_request
+def add_cache_headers(response):
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
+    return response
+
 @app.route('/favicon.ico')
 def favicon():
     return ('', 204)

@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=2.3">
 </head>
 <body>
 
@@ -191,10 +191,10 @@
                 <!-- Active Results Container (hidden initially) -->
                 <div id="resultsActiveBox" style="display: none;">
                     <div class="radar-box">
-                        <!-- Upgraded Professional Interactive Speedometer Gauge -->
+                        <!-- Upgraded Professional Large-Scale Interactive Speedometer Gauge -->
                         <div class="gauge-card-box">
                             <div class="gauge-svg-wrapper">
-                                <svg viewBox="0 0 340 195" class="speedometer-svg" id="speedometerSvg">
+                                <svg viewBox="0 0 380 215" class="speedometer-svg" id="speedometerSvg">
                                     <defs>
                                         <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                                             <stop offset="0%" stop-color="#059669" />
@@ -203,54 +203,60 @@
                                             <stop offset="72%" stop-color="#f97316" />
                                             <stop offset="100%" stop-color="#ef4444" />
                                         </linearGradient>
-                                        <filter id="gaugeGlow" x="-10%" y="-10%" width="120%" height="120%">
-                                            <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.18)"/>
+                                        <filter id="gaugeGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                            <feGaussianBlur stdDeviation="3.5" result="blur" />
+                                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
                                         </filter>
-                                        <filter id="needleShadow" x="-20%" y="-20%" width="140%" height="140%">
-                                            <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="rgba(0,0,0,0.45)"/>
+                                        <filter id="needleGlowFilter" x="-40%" y="-40%" width="180%" height="180%">
+                                            <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="var(--needle-color)" flood-opacity="0.9"/>
+                                            <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.5"/>
                                         </filter>
                                     </defs>
 
-                                    <!-- Outer Background Track -->
-                                    <path d="M 45 165 A 125 125 0 0 1 295 165" fill="none" class="gauge-track-bg" stroke-width="24" stroke-linecap="round"/>
-                                    <!-- Colored Meter Arc -->
-                                    <path d="M 45 165 A 125 125 0 0 1 295 165" fill="none" stroke="url(#gaugeGrad)" stroke-width="24" stroke-linecap="round" filter="url(#gaugeGlow)"/>
+                                    <!-- Outer Ambient Track Halo / Radar Sweep -->
+                                    <path d="M 46 185 A 144 144 0 0 1 334 185" fill="none" class="gauge-track-ambient" stroke-width="32" stroke-linecap="round"/>
 
-                                    <!-- Minor Radial Calibration Ticks -->
-                                    <path d="M 74 165 L 64 165" class="gauge-tick-line" stroke-width="2" stroke-linecap="round"/>
-                                    <path d="M 102 97 L 95 90" class="gauge-tick-line" stroke-width="2" stroke-linecap="round"/>
-                                    <path d="M 170 69 L 170 59" class="gauge-tick-line" stroke-width="2" stroke-linecap="round"/>
-                                    <path d="M 238 97 L 245 90" class="gauge-tick-line" stroke-width="2" stroke-linecap="round"/>
-                                    <path d="M 266 165 L 276 165" class="gauge-tick-line" stroke-width="2" stroke-linecap="round"/>
+                                    <!-- Main Arc Track Background -->
+                                    <path d="M 50 185 A 140 140 0 0 1 330 185" fill="none" class="gauge-track-bg" stroke-width="26" stroke-linecap="round"/>
+                                    <!-- Luminous Gradient Meter Arc -->
+                                    <path d="M 50 185 A 140 140 0 0 1 330 185" fill="none" stroke="url(#gaugeGrad)" stroke-width="26" stroke-linecap="round" filter="url(#gaugeGlow)"/>
 
-                                    <!-- Scale Benchmark Labels -->
-                                    <text x="22" y="172" class="gauge-tick-label">0%</text>
-                                    <text x="75" y="70" class="gauge-tick-label">25%</text>
-                                    <text x="170" y="24" class="gauge-tick-label" text-anchor="middle">50%</text>
-                                    <text x="265" y="70" class="gauge-tick-label">75%</text>
-                                    <text x="318" y="172" class="gauge-tick-label">100%</text>
+                                    <!-- Radial Precision Calibration Ticks -->
+                                    <path d="M 78 185 L 68 185" class="gauge-tick-line" stroke-width="3" stroke-linecap="round"/>
+                                    <path d="M 111 106 L 104 99" class="gauge-tick-line" stroke-width="3" stroke-linecap="round"/>
+                                    <path d="M 190 73 L 190 63" class="gauge-tick-line" stroke-width="3" stroke-linecap="round"/>
+                                    <path d="M 269 106 L 276 99" class="gauge-tick-line" stroke-width="3" stroke-linecap="round"/>
+                                    <path d="M 302 185 L 312 185" class="gauge-tick-line" stroke-width="3" stroke-linecap="round"/>
+
+                                    <!-- Scale Benchmark Labels (High-Visibility Crisp Typography) -->
+                                    <text x="26" y="192" class="gauge-tick-label">0%</text>
+                                    <text x="76" y="74" class="gauge-tick-label">25%</text>
+                                    <text x="190" y="24" class="gauge-tick-label" text-anchor="middle">50%</text>
+                                    <text x="304" y="74" class="gauge-tick-label">75%</text>
+                                    <text x="354" y="192" class="gauge-tick-label">100%</text>
 
                                     <!-- Operational Decision Cutoff Notch Marker -->
-                                    <g id="thresholdMarker" transform="rotate(0, 170, 165)">
-                                        <line x1="170" y1="177" x2="170" y2="153" stroke="#ffffff" stroke-width="3" stroke-linecap="round" filter="url(#needleShadow)"/>
-                                        <polygon points="166,149 174,149 170,154" fill="#ffffff"/>
+                                    <g id="thresholdMarker" transform="rotate(0, 190, 185)">
+                                        <line x1="190" y1="198" x2="190" y2="171" class="gauge-threshold-line" stroke-width="3.5" stroke-linecap="round"/>
+                                        <polygon points="185,166 195,166 190,172" class="gauge-threshold-flag"/>
                                     </g>
 
-                                    <!-- Aerodynamic Tapered Metallic Needle (Pivots at center 170, 165) -->
-                                    <g id="needleGroup" style="transform: rotate(-90deg); transform-origin: 170px 165px; transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);">
-                                        <polygon points="166,165 174,165 172,48 170,40 168,48" class="gauge-needle-polygon" filter="url(#needleShadow)"/>
-                                        <line x1="170" y1="165" x2="170" y2="40" class="gauge-needle-centerline" stroke-width="1.5"/>
+                                    <!-- Aerodynamic Luminous Tapered Needle (Pivots at center 190, 185) -->
+                                    <g id="needleGroup" style="transform: rotate(-90deg); transform-origin: 190px 185px; transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                                        <polygon points="184,185 196,185 193,64 190,48 187,64" class="gauge-needle-polygon" filter="url(#needleGlowFilter)"/>
+                                        <line x1="190" y1="185" x2="190" y2="48" class="gauge-needle-centerline" stroke-width="2"/>
+                                        <circle cx="190" cy="50" r="3.5" class="gauge-needle-tip-dot"/>
                                     </g>
 
-                                    <!-- Multi-layer Chrome Needle Hub & Glowing Jewel -->
-                                    <circle cx="170" cy="165" r="14" class="gauge-needle-hub-outer" filter="url(#needleShadow)"/>
-                                    <circle cx="170" cy="165" r="8" class="gauge-needle-hub-inner"/>
-                                    <circle cx="170" cy="165" r="4" fill="#10b981" id="hubJewel"/>
+                                    <!-- Multi-layer Chrome Needle Hub & Center Glow Jewel -->
+                                    <circle cx="190" cy="185" r="16" class="gauge-needle-hub-outer" filter="url(#needleGlowFilter)"/>
+                                    <circle cx="190" cy="185" r="9" class="gauge-needle-hub-inner"/>
+                                    <circle cx="190" cy="185" r="5" class="gauge-hub-jewel" id="hubJewel"/>
 
                                     <!-- Interactive Hover Tooltip -->
                                     <g id="gaugeInteractiveTip" opacity="0" pointer-events="none" style="transition: opacity 0.2s ease;">
-                                        <rect x="110" y="85" width="120" height="28" rx="8" class="gauge-tooltip-bg"/>
-                                        <text x="170" y="104" text-anchor="middle" class="gauge-tooltip-text" id="gaugeTipText">50%</text>
+                                        <rect x="125" y="95" width="130" height="32" rx="10" class="gauge-tooltip-bg"/>
+                                        <text x="190" y="116" text-anchor="middle" class="gauge-tooltip-text" id="gaugeTipText">50%</text>
                                     </g>
                                 </svg>
                             </div>
@@ -358,8 +364,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/static/js/audio.js"></script>
-    <script src="/static/js/i18n.js"></script>
-    <script src="/static/js/app.js"></script>
+    <script src="/static/js/audio.js?v=2.3"></script>
+    <script src="/static/js/i18n.js?v=2.3"></script>
+    <script src="/static/js/app.js?v=2.3"></script>
 </body>
 </html>

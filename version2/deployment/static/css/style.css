@@ -29,8 +29,14 @@
     
     /* Speedometer Gauge specific colors */
     --gauge-track: #e2e8f0;
+    --gauge-halo: rgba(5, 150, 105, 0.08);
+    --gauge-tick: #475569;
+    --gauge-tick-label: #064e3b;
     --needle-color: #0f172a;
+    --needle-centerline: #38bdf8;
+    --needle-tip: #ef4444;
     --needle-hub: #0f172a;
+    --threshold-notch: #d97706;
 }
 
 [data-theme="dark"] {
@@ -57,9 +63,16 @@
     --badge-text: #a7f3d0;
     --emergency-bg: rgba(5, 34, 38, 0.94);
     
-    --gauge-track: #1e293b;
+    /* Night Mode Speedometer Gauge - Vibrant Glowing Aqua & Luminous Neon Elements */
+    --gauge-track: #092c35;
+    --gauge-halo: rgba(45, 212, 191, 0.25);
+    --gauge-tick: #7dd3fc;
+    --gauge-tick-label: #f0fdf4;
     --needle-color: #38bdf8;
+    --needle-centerline: #ffffff;
+    --needle-tip: #f43f5e;
     --needle-hub: #0284c7;
+    --threshold-notch: #fbbf24;
 }
 
 * {
@@ -104,12 +117,12 @@ body {
     object-fit: cover;
 }
 
-/* Container */
+/* Container - Expansive Full-Screen Canvas */
 .container {
-    max-width: 1680px;
-    width: 95%;
+    max-width: 1840px;
+    width: 96%;
     margin: 0 auto;
-    padding: 24px 32px 70px 32px;
+    padding: 26px 40px 70px 40px;
     position: relative;
     z-index: 1;
 }
@@ -238,26 +251,26 @@ header.top-nav {
     background: var(--card-bg);
     backdrop-filter: blur(18px);
     border: 1.5px solid var(--card-border);
-    border-radius: 22px;
-    padding: 30px;
+    border-radius: 26px;
+    padding: 36px 40px;
     box-shadow: var(--card-shadow);
     display: flex;
     flex-direction: column;
 }
 
 .dash-card h2 {
-    font-size: 1.45rem;
+    font-size: 1.65rem;
     font-weight: 800;
     color: var(--text-primary);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     line-height: 1.3;
 }
 
 .dash-card p.card-desc {
-    font-size: 0.96rem;
+    font-size: 1.02rem;
     font-weight: 600;
     color: var(--text-muted);
-    margin-bottom: 22px;
+    margin-bottom: 24px;
     line-height: 1.55;
 }
 
@@ -497,15 +510,25 @@ header.top-nav {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .gauge-svg-wrapper {
-    width: 360px;
+    width: 520px;
     max-width: 100%;
-    height: 205px;
+    height: 295px;
     position: relative;
     cursor: crosshair;
+    margin: 0 auto;
+    filter: drop-shadow(0 12px 35px rgba(0, 0, 0, 0.12));
+    transition: transform 0.3s ease;
+}
+
+@media (min-width: 1400px) {
+    .gauge-svg-wrapper {
+        width: 550px;
+        height: 310px;
+    }
 }
 
 .speedometer-svg {
@@ -514,92 +537,191 @@ header.top-nav {
     overflow: visible;
 }
 
+.gauge-track-ambient {
+    stroke: var(--gauge-halo);
+    stroke-linecap: round;
+    transition: stroke 0.3s ease;
+}
+
+[data-theme="dark"] .gauge-track-ambient {
+    stroke: rgba(45, 212, 191, 0.22);
+    filter: drop-shadow(0 0 10px rgba(45, 212, 191, 0.35));
+}
+
 .gauge-track-bg {
     stroke: var(--gauge-track);
+    transition: stroke 0.3s ease;
+}
+
+[data-theme="dark"] .gauge-track-bg {
+    stroke: #0a2d36;
+    filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.8));
 }
 
 .gauge-tick-line {
-    stroke: var(--text-muted);
-    opacity: 0.6;
+    stroke: var(--gauge-tick);
+    stroke-width: 3.5px;
+    opacity: 0.85;
+    transition: stroke 0.3s ease;
+}
+
+[data-theme="dark"] .gauge-tick-line {
+    stroke: #7dd3fc;
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.8));
 }
 
 .gauge-tick-label {
-    font-size: 12px;
+    font-size: 13.5px;
     font-weight: 800;
-    fill: var(--text-muted);
+    fill: var(--gauge-tick-label);
+    letter-spacing: 0.5px;
+    transition: fill 0.3s ease;
+}
+
+[data-theme="dark"] .gauge-tick-label {
+    fill: #f0fdf4;
+    font-size: 14px;
+    font-weight: 900;
+    filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
+}
+
+.gauge-threshold-line {
+    stroke: var(--threshold-notch);
+    stroke-width: 3.5px;
+    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.8));
+}
+
+.gauge-threshold-flag {
+    fill: var(--threshold-notch);
+    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.9));
 }
 
 .gauge-needle-polygon {
     fill: var(--needle-color);
+    transition: fill 0.3s ease;
+}
+
+[data-theme="dark"] .gauge-needle-polygon {
+    fill: #38bdf8;
+    filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.95)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
 }
 
 .gauge-needle-centerline {
-    stroke: #38bdf8;
+    stroke: var(--needle-centerline);
+    stroke-width: 2.5px;
+}
+
+[data-theme="dark"] .gauge-needle-centerline {
+    stroke: #ffffff;
+    stroke-width: 2.5px;
+    filter: drop-shadow(0 0 5px #ffffff);
+}
+
+.gauge-needle-tip-dot {
+    fill: var(--needle-tip);
+}
+
+[data-theme="dark"] .gauge-needle-tip-dot {
+    fill: #f43f5e;
+    filter: drop-shadow(0 0 8px #f43f5e);
 }
 
 .gauge-needle-hub-outer {
     fill: var(--needle-hub);
-    stroke: rgba(255, 255, 255, 0.4);
-    stroke-width: 2.5px;
+    stroke: rgba(255, 255, 255, 0.6);
+    stroke-width: 3px;
+    transition: fill 0.3s ease, stroke 0.3s ease;
+}
+
+[data-theme="dark"] .gauge-needle-hub-outer {
+    fill: #0369a1;
+    stroke: #38bdf8;
+    stroke-width: 3.5px;
+    filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.9));
 }
 
 .gauge-needle-hub-inner {
     fill: #021a16;
 }
 
+[data-theme="dark"] .gauge-needle-hub-inner {
+    fill: #061a1e;
+    stroke: rgba(56, 189, 248, 0.4);
+    stroke-width: 1.5px;
+}
+
+.gauge-hub-jewel {
+    fill: #10b981;
+    transition: fill 0.3s ease;
+}
+
+[data-theme="dark"] .gauge-hub-jewel {
+    filter: drop-shadow(0 0 8px currentColor);
+}
+
 .gauge-tooltip-bg {
     fill: var(--text-dark);
-    opacity: 0.94;
-    rx: 8px;
+    opacity: 0.96;
+    rx: 10px;
 }
 
 .gauge-tooltip-text {
     fill: #ffffff;
-    font-size: 11.5px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 800;
 }
 
 /* Dedicated Unobstructed Gauge Reading directly below needle pivot */
 .gauge-reading-box {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 14px;
 }
 
 .gauge-reading-box .percent-val {
-    font-size: 3.6rem;
+    font-size: 4.8rem;
     font-weight: 900;
     line-height: 1;
     color: var(--text-primary);
-    letter-spacing: -1px;
+    letter-spacing: -1.5px;
     transition: color 0.4s ease;
 }
 
+[data-theme="dark"] .gauge-reading-box .percent-val {
+    text-shadow: 0 0 25px currentColor, 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
 .gauge-reading-box .percent-label {
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 1.18rem;
+    font-weight: 800;
     color: var(--text-secondary);
-    margin-top: 5px;
+    margin-top: 8px;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.8px;
 }
 
 .threshold-hint-label {
-    font-size: 0.88rem;
+    font-size: 0.96rem;
     font-weight: 700;
     color: var(--accent-river);
-    margin-top: 6px;
+    margin-top: 8px;
 }
 
 /* Status Alert Pill */
 .status-pill {
     display: inline-block;
-    padding: 10px 28px;
-    border-radius: 40px;
-    font-size: 1.12rem;
+    padding: 12px 36px;
+    border-radius: 50px;
+    font-size: 1.25rem;
     font-weight: 800;
-    letter-spacing: 0.5px;
-    margin: 16px 0 24px 0;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    letter-spacing: 0.6px;
+    margin: 18px 0 24px 0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16);
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .status-pill {
+    box-shadow: 0 0 25px currentColor, 0 6px 24px rgba(0,0,0,0.5);
 }
 
 /* Hydro Driver Cards */
@@ -706,10 +828,10 @@ header.top-nav {
 .emergency-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
+    gap: 18px;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1080px) {
     .emergency-grid {
         grid-template-columns: repeat(3, 1fr);
     }
@@ -724,13 +846,14 @@ header.top-nav {
 .emergency-card {
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
-    border-radius: 16px;
-    padding: 20px 16px;
+    border-radius: 18px;
+    padding: 22px 18px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.04);
-    min-height: 220px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    min-height: 225px;
+    min-width: 0;
 }
 
 .emergency-card:hover {

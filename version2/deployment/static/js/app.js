@@ -162,12 +162,12 @@ function setupGaugeInteractivity() {
 
     gaugeSvg.addEventListener('mousemove', (e) => {
         const rect = gaugeSvg.getBoundingClientRect();
-        const svgX = (e.clientX - rect.left) * (340 / rect.width);
-        const svgY = (e.clientY - rect.top) * (195 / rect.height);
+        const svgX = (e.clientX - rect.left) * (380 / rect.width);
+        const svgY = (e.clientY - rect.top) * (215 / rect.height);
         
-        // Calculate angle relative to center (170, 165)
-        const dx = svgX - 170;
-        const dy = 165 - svgY;
+        // Calculate angle relative to center (190, 185)
+        const dx = svgX - 190;
+        const dy = 185 - svgY;
         let rad = Math.atan2(dy, dx);
         let deg = rad * (180 / Math.PI); // 0 to 180 degrees
         
@@ -189,11 +189,11 @@ function setupGaugeInteractivity() {
 
     gaugeSvg.addEventListener('click', (e) => {
         const rect = gaugeSvg.getBoundingClientRect();
-        const svgX = (e.clientX - rect.left) * (340 / rect.width);
-        const svgY = (e.clientY - rect.top) * (195 / rect.height);
+        const svgX = (e.clientX - rect.left) * (380 / rect.width);
+        const svgY = (e.clientY - rect.top) * (215 / rect.height);
         
-        const dx = svgX - 170;
-        const dy = 165 - svgY;
+        const dx = svgX - 190;
+        const dy = 185 - svgY;
         let rad = Math.atan2(dy, dx);
         let deg = rad * (180 / Math.PI);
         if (deg >= 0 && deg <= 180) {
@@ -203,7 +203,7 @@ function setupGaugeInteractivity() {
             const needleGroup = document.getElementById('needleGroup');
             if (needleGroup) {
                 needleGroup.style.transform = `rotate(${angle}deg)`;
-                needleGroup.style.transformOrigin = '170px 165px';
+                needleGroup.style.transformOrigin = '190px 185px';
             }
         }
     });
@@ -386,13 +386,13 @@ function renderAssessmentResults(data) {
         probEl.style.color = data.badge_color || 'var(--text-primary)';
     }
 
-    // Animate Needle along the 180° semi-circle arc (Pivot center: 170, 165)
+    // Animate Needle along the 180° semi-circle arc (Pivot center: 190, 185)
     // -90deg is 0% (left), 0deg is 50% (top), +90deg is 100% (right)
     const angle = (probVal / 100) * 180 - 90;
     const needleGroup = document.getElementById('needleGroup');
     if (needleGroup) {
         needleGroup.style.transform = `rotate(${angle}deg)`;
-        needleGroup.style.transformOrigin = '170px 165px';
+        needleGroup.style.transformOrigin = '190px 185px';
     }
 
     // Position Operational Decision Cutoff Notch Marker
@@ -400,7 +400,7 @@ function renderAssessmentResults(data) {
     const threshAngle = (thresholdVal * 180) - 90;
     const threshMarker = document.getElementById('thresholdMarker');
     if (threshMarker) {
-        threshMarker.setAttribute('transform', `rotate(${threshAngle}, 170, 165)`);
+        threshMarker.setAttribute('transform', `rotate(${threshAngle}, 190, 185)`);
     }
 
     const threshHint = document.getElementById('thresholdHintText');
