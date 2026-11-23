@@ -3,6 +3,7 @@
 # 🌊 FloodPredicta
 ### AI-Powered Multi-Station Flood Early Warning System for Bangladesh
 
+[![Production Web App](https://img.shields.io/badge/Production_Web_App-FloodPredicta--App-0284c7?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GofranEmonKhan/FloodPredicta-App)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Machine Learning](https://img.shields.io/badge/ML-XGBoost%20%7C%20Ensemble-orange.svg?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![Framework](https://img.shields.io/badge/Toolkit-Pandas%20%7C%20NumPy%20%7C%20SciPy-blueviolet.svg?style=for-the-badge)](https://pandas.pydata.org/)
@@ -14,6 +15,7 @@
   <b>A 65-year empirical hydrological study (1948–2013) across 33 Bangladesh Meteorological Department (BMD) weather stations, transforming raw climate observations into actionable, high-recall flood catastrophe alerts without data loss or temporal leakage.</b>
 </p>
 
+[Live Web App Repo](https://github.com/GofranEmonKhan/FloodPredicta-App) •
 [Key Features](#-key-features) •
 [System Evolution (V1 vs V2)](#-system-evolution-version-1-vs-version-20) •
 [Methodology](#-hydrological-modeling--methodology) •
@@ -25,6 +27,14 @@
 [Repository Tree](#-repository-architecture)
 
 </div>
+
+---
+
+> [!TIP]
+> **Looking for the live interactive web application & deployment repository?**  
+> We have decoupled the production web application into a dedicated standalone repository:  
+> 🚀 **[GitHub: GofranEmonKhan/FloodPredicta-App](https://github.com/GofranEmonKhan/FloodPredicta-App)**  
+> *(Featuring bilingual English/Bengali UI, Day/Night riverine modes, ambient river audio, 999/1090/333 emergency integrations, and zero-config cloud deployment configs)*
 
 ---
 
@@ -282,6 +292,9 @@ Open **`http://127.0.0.1:5000`** in your browser to interact with the system, to
 ---
 
 ## 🌐 Interactive Web Application
+
+> 🚀 **Dedicated Deployment Repository:**  
+> The production web dashboard and serving runtime have been decoupled into **[GofranEmonKhan/FloodPredicta-App](https://github.com/GofranEmonKhan/FloodPredicta-App)** for seamless zero-config cloud deployments (Render, Railway, Docker).
 
 FloodPredicta features a production-grade single-page application (SPA) tailored to Bangladesh's riverine delta geography:
 

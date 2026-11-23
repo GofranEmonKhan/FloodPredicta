@@ -14,14 +14,23 @@ class FloodPredictor:
         models_dir = os.path.join(self.root_dir, 'models', model_regime)
         
         model_filename = 'xgboost_model.pkl' if model_type == 'xgboost' else 'stacking_ensemble_model.pkl'
-        model_path = os.path.join(models_dir, model_filename)
-        feature_cols_path = os.path.join(models_dir, 'feature_columns.pkl')
         
-        # Fallback to shuffled if regime not found
-        if not os.path.exists(model_path):
-            models_dir = os.path.join(self.root_dir, 'models', 'split_shuffled_70_15_15')
+        # Check direct local models folder first (standalone deployment repo)
+        local_models = os.path.join(self.base_dir, 'models')
+        if os.path.exists(os.path.join(local_models, model_filename)):
+            model_path = os.path.join(local_models, model_filename)
+            feature_cols_path = os.path.join(local_models, 'feature_columns.pkl')
+        elif os.path.exists(os.path.join(local_models, model_regime, model_filename)):
+            model_path = os.path.join(local_models, model_regime, model_filename)
+            feature_cols_path = os.path.join(local_models, model_regime, 'feature_columns.pkl')
+        else:
+            models_dir = os.path.join(self.root_dir, 'models', model_regime)
             model_path = os.path.join(models_dir, model_filename)
             feature_cols_path = os.path.join(models_dir, 'feature_columns.pkl')
+            if not os.path.exists(model_path):
+                models_dir = os.path.join(self.root_dir, 'models', 'split_shuffled_70_15_15')
+                model_path = os.path.join(models_dir, model_filename)
+                feature_cols_path = os.path.join(models_dir, 'feature_columns.pkl')
 
         # Load artifacts
         with open(meta_path, 'r', encoding='utf-8') as f:

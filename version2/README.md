@@ -4,6 +4,13 @@
 **Status:** Completed & Production Deployed (Pipelines, Benchmarks, Diagnostic Reports & Interactive Web App)  
 **Target:** Flood Prediction and Early Warning across 33 Bangladesh Meteorological Stations  
 
+[![Deployment Repo](https://img.shields.io/badge/Production_Deployment-FloodPredicta--App-0284c7?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GofranEmonKhan/FloodPredicta-App)
+
+> [!TIP]
+> **Decoupled Production Deployment Repository:**  
+> The standalone production web application, UI components, Docker configurations, and REST inference engine are hosted in our dedicated production repository:  
+> 🌐 **[GitHub: GofranEmonKhan/FloodPredicta-App](https://github.com/GofranEmonKhan/FloodPredicta-App)**.  
+
 ---
 
 ## 1. Executive Summary & Vision
