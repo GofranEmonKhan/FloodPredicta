@@ -6,7 +6,7 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Machine Learning](https://img.shields.io/badge/ML-XGBoost%20%7C%20Ensemble-orange.svg?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![Framework](https://img.shields.io/badge/Toolkit-Pandas%20%7C%20NumPy%20%7C%20SciPy-blueviolet.svg?style=for-the-badge)](https://pandas.pydata.org/)
-[![Evaluation](https://img.shields.io/badge/ROC--AUC-0.9958-brightgreen.svg?style=for-the-badge)](version2/EXPERIMENT_TRACKER.md)
+[![Evaluation](https://img.shields.io/badge/ROC--AUC-0.9958-brightgreen.svg?style=for-the-badge)](version2/README.md)
 [![Status](https://img.shields.io/badge/Release-Version%202.0%20(Production)-success.svg?style=for-the-badge)](version2/)
 [![License: Citation Required](https://img.shields.io/badge/License-Citation%20Required-crimson.svg?style=for-the-badge)](LICENSE)
 
@@ -197,8 +197,7 @@ FloodPredicta/
 ├── Model_Deployment/                          # Legacy Version 1 Flask serving app
 │
 └── version2/                                  # Production-Grade Version 2.0 System
-    ├── README.md                              # V2 Master Redesign Plan & Strategy
-    ├── EXPERIMENT_TRACKER.md                  # Detailed Experiment Chronicle & Threshold Audit
+    ├── README.md                              # V2 Master Redesign Plan, Architecture & Benchmarks
     │
     ├── data/
     │   ├── raw/

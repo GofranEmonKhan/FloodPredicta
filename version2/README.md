@@ -34,20 +34,11 @@ Version 2 preserves the original raw data (`version2/data/raw/flooddata.csv`) bu
 - **Robust Feature Scaling:** Replace basic scaling with `RobustScaler` (median & IQR centering) or `QuantileTransformer(output_distribution='normal')` to handle heavy-tailed precipitation without distorting model weights.
 
 ### B. Hydrological & Temporal Feature Engineering
-We introduce real-world physical and hydrological indicators:
-1. **Antecedent Rainfall & Lags:**
-   - $\text{Rainfall\_Lag\_1}$: Precipitation in month $t-1$.
-   - $\text{Rainfall\_Lag\_2}$: Precipitation in month $t-2$.
-2. **Cumulative Monsoonal Saturation:**
-   - $\text{Rolling\_3M\_Rainfall}$: 3-month cumulative rainfall ($\sum_{k=0}^{2} \text{Rainfall}_{t-k}$) capturing catchment saturation.
-   - $\text{Rainfall\_Spike\_Ratio}$: $\frac{\text{Rainfall}_t}{\text{Mean Rainfall of Station in Month}}$.
-3. **Hydraulic Topography & Interaction Ratios:**
-   - $\text{Runoff\_Pooling\_Index} = \frac{\text{Rainfall}}{\text{ALT} + 1}$: Quantifies elevated risk for low-lying delta stations compared to hilly areas.
-   - $\text{Monsoon\_Moisture\_Index} = \text{Relative\_Humidity} \times \text{Cloud\_Coverage}$: Measures prolonged depressions and low evapotranspiration.
-4. **Cyclical Seasonality Encodings:**
-   - Rather than arbitrary integer months (1–12), use continuous Fourier cyclical transformations:
-     $$\sin\left(\frac{2\pi \cdot \text{Month}}{12}\right), \quad \cos\left(\frac{2\pi \cdot \text{Month}}{12}\right)$$
-   - Add a binary domain flag: $\text{Is\_Monsoon} = 1$ for months June through September.
+* **_Antecedent Rainfall Lags_**: Captures multi-month ground saturation using prior 1-month and 2-month precipitation.
+* **_Cumulative Monsoonal Saturation_**: Tracks 3-month rolling rainfall accumulation to quantify prolonged catchment build-up.
+* **_Runoff & Topographic Risk Ratios_**: Normalizes rainfall against elevation to capture enhanced pooling in low-altitude delta plains.
+* **_Atmospheric Moisture Coupling_**: Combines relative humidity and cloud cover to identify persistent monsoonal low-pressure troughs.
+* **_Cyclical Seasonal Signals_**: Continuous sine and cosine calendar oscillations paired with an active monsoon window indicator.
 
 ### C. Realistic Chronological & Walk-Forward Validation
 - **Train Split:** 1948 – 2003 (55 years of historical baseline).
@@ -152,12 +143,55 @@ The experimental workflow in `version2/notebooks/` is structured across dedicate
 
 ---
 
-## 6. Directory Structure
+## 6. Comprehensive Empirical Benchmarks & Threshold Calibration
+
+### A. Regime 1: Stratified Shuffled Split (70% Train: 14,380 | 15% Val: 3,082 | 15% Test: 3,082)
+*Benchmarking against Version 1's split methodology on the complete, non-pruned dataset (100% of 4,132 historical floods preserved):*
+
+| Model Name | Test Accuracy | Precision (Flood=1) | Recall (Flood=1) | F1-Score (Flood=1) | ROC-AUC | Optimal Threshold ($t^*$) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **XGBoost (Champion)** | **0.9737** | **0.9004** | **0.9774** | **0.9374** | **0.9958** | 0.45 |
+| **HistGradientBoosting** | 0.9734 | 0.8956 | **0.9823** | 0.9369 | 0.9957 | 0.45 |
+| **Extra Trees** | **0.9744** | **0.9300** | 0.9435 | 0.9367 | 0.9949 | 0.45 |
+| **Stacking Ensemble** | 0.9731 | 0.8966 | 0.9790 | 0.9360 | **0.9963** | 0.50 |
+| **Random Forest** | 0.9734 | 0.9311 | 0.9371 | 0.9341 | 0.9960 | 0.45 |
+
+> **Scientific Insight (V1 vs V2):** Under the exact same shuffled split, Version 2 outperforms Version 1 across all disaster-detection metrics (**Recall: 0.9774 vs 0.9435**, **F1: 0.9374 vs 0.9241**, **ROC-AUC: 0.9958 vs 0.9946**) while retaining all 1,387 severe floods that Version 1 had discarded as "outliers".
+
+### B. Regime 2: Chronological Split A (Train <= 2003: 16,656 | Val 2004–2008: 1,920 | Test >= 2009: 1,968)
+*Historical 56-year baseline, 5-year validation calibration, and 5-year future holdout test set (zero temporal leakage):*
+
+| Model Name | Test Accuracy | Precision (Flood=1) | Recall (Flood=1) | F1-Score (Flood=1) | ROC-AUC | Optimal Threshold ($t^*$) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **XGBoost (Champion)** | **0.9644** | **0.9127** | **0.9127** | **0.9127** | **0.9871** | 0.45 |
+| **Stacking Ensemble** | **0.9644** | **0.9127** | **0.9127** | **0.9127** | 0.9876 | 0.45 |
+| **HistGradientBoosting** | 0.9624 | 0.9057 | 0.9102 | 0.9080 | **0.9879** | 0.40 |
+| **Extra Trees** | 0.9619 | 0.9312 | 0.8778 | 0.9037 | 0.9846 | 0.45 |
+| **Random Forest** | 0.9614 | 0.9452 | 0.8603 | 0.9008 | 0.9843 | 0.45 |
+
+### C. Regime 3: Chronological Split B (Train <= 1997: 14,352 | Val 1998–2008: 4,224 | Test >= 2009: 1,968)
+*Strict 70% historical baseline, 20% validation tuning window, and 10% future holdout test set:*
+
+| Model Name | Test Accuracy | Precision (Flood=1) | Recall (Flood=1) | F1-Score (Flood=1) | ROC-AUC | Optimal Threshold ($t^*$) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Stacking Ensemble (Champion)** | **0.9649** | **0.9150** | **0.9127** | **0.9139** | 0.9859 | 0.45 |
+| **XGBoost** | 0.9639 | 0.9084 | **0.9152** | 0.9118 | 0.9866 | 0.50 |
+| **HistGradientBoosting** | 0.9619 | 0.8976 | **0.9177** | 0.9075 | **0.9878** | 0.40 |
+| **Random Forest** | 0.9629 | **0.9409** | 0.8728 | 0.9056 | 0.9814 | 0.40 |
+| **Extra Trees** | 0.9599 | 0.9259 | 0.8728 | 0.8986 | 0.9831 | 0.40 |
+
+### D. Operational Decision Threshold Optimization
+Because flood disasters represent an asymmetric loss function, candidate decision thresholds were evaluated from 0.10 to 0.85 (step size 0.05) on independent validation sets:
+* **Balanced Operational Mode ($t^* \approx 0.45 - 0.50$):** Maximizes disaster F1-Score (~0.93–0.94), providing the optimal mathematical balance between false alarms and missed events.
+* **High-Alert / Life-Safety Mode ($t \approx 0.30 - 0.35$):** Prioritizes disaster recall ($\text{Recall} \ge 98\%$), ensuring virtually zero missed catastrophe events for early public evacuation and emergency response.
+
+---
+
+## 7. Directory Structure
 
 ```text
 version2/
-├── README.md                                 # Master strategic plan & architecture
-├── EXPERIMENT_TRACKER.md                     # Comprehensive experiment chronicle & threshold audit
+├── README.md                                 # Master strategic plan, architecture & benchmarks
 ├── data/
 │   ├── raw/
 │   │   └── flooddata.csv                     # Preserved raw BMD climate dataset (20,544 rows)
@@ -179,13 +213,13 @@ version2/
 │   ├── split_chronological_70_15_15/         # 20 standalone diagnostic plots
 │   └── split_chronological_70_20_10/         # 20 standalone diagnostic plots
 └── deployment/                               # Production Web Application & Serving API
-    ├── app.py                                # Flask web application & REST API
+    ├── app.py                                # Flask web application & dual-port REST API
     ├── predictor.py                          # 59-feature zero-defect runtime inference engine
     ├── station_metadata.json                 # Precomputed geo-coordinates & precipitation baselines
     ├── templates/
     │   └── index.html                        # River-themed single-page responsive dashboard
     ├── static/
-    │   ├── css/style.css                     # Lush greenery & moonlit river night mode styles
+    │   ├── css/style.css                     # High-contrast greenery & moonlit night mode theme
     │   └── js/
     │       ├── app.js                        # Dynamic UI, gauge animator & scenario presets
     │       ├── i18n.js                       # Bangladesh-context bilingual engine (EN / বাংলা)
@@ -196,7 +230,7 @@ version2/
 
 ---
 
-## 7. Current Project State
+## 8. Current Project State
 
 - [x] Version 1 intact and preserved in parent directory.
 - [x] Non-destructive data cleaning and hydrological feature engineering completed with 100% disaster event preservation.
@@ -207,7 +241,7 @@ version2/
 
 ---
 
-## 8. Production Web Application & Serving Architecture
+## 9. Production Web Application & Serving Architecture
 
 The production application is located in `version2/deployment/` and delivers a complete, user-centric disaster monitoring dashboard tailored to Bangladesh's hydrological landscape.
 
@@ -225,7 +259,7 @@ The production application is located in `version2/deployment/` and delivers a c
   * **16263** — National Health Call Center
   * **BWDB FFWC** — Flood Forecasting and Warning Centre
 * **Historical Scenario Presets:** One-click preloads for historical test scenarios:
-  * *1998 Deluge:* Catastrophic mega-flood conditions at Dhaka station.
+  * *1998 Deluge:* Catastrophic mega-flood conditions at Faridpur (central delta basin, 99.98% flood probability).
   * *2022 Sylhet Flash Flood:* Extreme mountain runoff and flash flood pooling in the Surma-Kushiyara basin.
   * *Dry Winter Season:* Typical peaceful winter baseline with zero flood risk.
 * **REST API:**

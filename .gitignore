@@ -11,6 +11,9 @@ Model Deployment/
 # Local reproduction scripts (kept local, excluded from GitHub)
 version2/src/
 
+# Local experiment tracker (kept local, excluded from GitHub)
+version2/EXPERIMENT_TRACKER.md
+
 # OS artifacts
 .DS_Store
 Thumbs.db
