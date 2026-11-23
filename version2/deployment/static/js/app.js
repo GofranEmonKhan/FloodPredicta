@@ -147,6 +147,66 @@ function setupEventListeners() {
     document.getElementById('preset1998')?.addEventListener('click', () => applyPreset('1998'));
     document.getElementById('presetSylhet')?.addEventListener('click', () => applyPreset('sylhet'));
     document.getElementById('presetWinter')?.addEventListener('click', () => applyPreset('winter'));
+
+    // Interactive Speedometer Gauge scrubbing and inspection
+    setupGaugeInteractivity();
+}
+
+// Interactive Speedometer Gauge scrubbing & tooltip
+function setupGaugeInteractivity() {
+    const gaugeSvg = document.getElementById('speedometerSvg');
+    const gaugeTip = document.getElementById('gaugeInteractiveTip');
+    const gaugeTipText = document.getElementById('gaugeTipText');
+
+    if (!gaugeSvg || !gaugeTip || !gaugeTipText) return;
+
+    gaugeSvg.addEventListener('mousemove', (e) => {
+        const rect = gaugeSvg.getBoundingClientRect();
+        const svgX = (e.clientX - rect.left) * (340 / rect.width);
+        const svgY = (e.clientY - rect.top) * (195 / rect.height);
+        
+        // Calculate angle relative to center (170, 165)
+        const dx = svgX - 170;
+        const dy = 165 - svgY;
+        let rad = Math.atan2(dy, dx);
+        let deg = rad * (180 / Math.PI); // 0 to 180 degrees
+        
+        if (deg >= -15 && deg <= 195) {
+            deg = Math.max(0, Math.min(180, deg));
+            const pct = Math.max(0, Math.min(100, Math.round((180 - deg) / 1.8)));
+            gaugeTip.style.opacity = '1';
+            const tierStr = pct >= 70 ? (currentLang === 'bn' ? 'চরম বিপদ' : 'Severe') :
+                            pct >= 45 ? (currentLang === 'bn' ? 'উচ্চ ঝুঁকি' : 'High Alert') :
+                            pct >= 25 ? (currentLang === 'bn' ? 'নজরদারি' : 'Watch') :
+                                        (currentLang === 'bn' ? 'স্বাভাবিক' : 'Normal');
+            gaugeTipText.textContent = `${pct}% (${tierStr})`;
+        }
+    });
+
+    gaugeSvg.addEventListener('mouseleave', () => {
+        gaugeTip.style.opacity = '0';
+    });
+
+    gaugeSvg.addEventListener('click', (e) => {
+        const rect = gaugeSvg.getBoundingClientRect();
+        const svgX = (e.clientX - rect.left) * (340 / rect.width);
+        const svgY = (e.clientY - rect.top) * (195 / rect.height);
+        
+        const dx = svgX - 170;
+        const dy = 165 - svgY;
+        let rad = Math.atan2(dy, dx);
+        let deg = rad * (180 / Math.PI);
+        if (deg >= 0 && deg <= 180) {
+            const pct = Math.max(0, Math.min(100, Math.round((180 - deg) / 1.8)));
+            animateGaugeNumber(pct, 500);
+            const angle = (pct / 100) * 180 - 90;
+            const needleGroup = document.getElementById('needleGroup');
+            if (needleGroup) {
+                needleGroup.style.transform = `rotate(${angle}deg)`;
+                needleGroup.style.transformOrigin = '170px 165px';
+            }
+        }
+    });
 }
 
 function onStationOrMonthChange() {
@@ -282,21 +342,80 @@ async function onFormSubmit(e) {
     }
 }
 
+// Smooth Count-Up Animation for Gauge Reading
+let currentProbValue = 0;
+function animateGaugeNumber(targetVal, duration = 850) {
+    const probEl = document.getElementById('gaugeProbability');
+    if (!probEl) return;
+    
+    const startVal = currentProbValue;
+    const startTime = performance.now();
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1.0);
+        
+        // Easing: ease-out cubic
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const interpolated = startVal + (targetVal - startVal) * easeOut;
+        
+        probEl.textContent = `${interpolated.toFixed(2)}%`;
+        
+        if (progress < 1.0) {
+            requestAnimationFrame(updateCounter);
+        } else {
+            probEl.textContent = `${targetVal.toFixed(2)}%`;
+            currentProbValue = targetVal;
+        }
+    }
+    
+    requestAnimationFrame(updateCounter);
+}
+
 // Render Results
 function renderAssessmentResults(data) {
     document.getElementById('emptyStateBox').style.display = 'none';
     document.getElementById('resultsActiveBox').style.display = 'block';
 
     const probVal = data.probability;
-    const probEl = document.getElementById('gaugeProbability');
-    if (probEl) probEl.textContent = `${probVal}%`;
+    animateGaugeNumber(probVal);
 
-    // Animate Needle along the 180° semi-circle arc (-90deg = 0%, 0deg = 50%, +90deg = 100%)
+    // Color coordination on the percentage number
+    const probEl = document.getElementById('gaugeProbability');
+    if (probEl) {
+        probEl.style.color = data.badge_color || 'var(--text-primary)';
+    }
+
+    // Animate Needle along the 180° semi-circle arc (Pivot center: 170, 165)
+    // -90deg is 0% (left), 0deg is 50% (top), +90deg is 100% (right)
     const angle = (probVal / 100) * 180 - 90;
     const needleGroup = document.getElementById('needleGroup');
     if (needleGroup) {
         needleGroup.style.transform = `rotate(${angle}deg)`;
-        needleGroup.style.transformOrigin = '120px 118px';
+        needleGroup.style.transformOrigin = '170px 165px';
+    }
+
+    // Position Operational Decision Cutoff Notch Marker
+    const thresholdVal = data.threshold_used !== undefined ? data.threshold_used : 0.50;
+    const threshAngle = (thresholdVal * 180) - 90;
+    const threshMarker = document.getElementById('thresholdMarker');
+    if (threshMarker) {
+        threshMarker.setAttribute('transform', `rotate(${threshAngle}, 170, 165)`);
+    }
+
+    const threshHint = document.getElementById('thresholdHintText');
+    if (threshHint) {
+        const modeText = currentLang === 'bn' 
+            ? (thresholdVal === 0.35 ? 'জরুরি জীবন-রক্ষা মোড' : 'সুষম নির্ভুলতা মোড')
+            : (thresholdVal === 0.35 ? 'Life-Safety Alert Mode' : 'Balanced Decision Mode');
+        const labelPrefix = currentLang === 'bn' ? 'সিদ্ধান্ত কাট-অফ থ্রেশহোল্ড:' : 'Decision Cutoff Threshold:';
+        threshHint.textContent = `${labelPrefix} ${(thresholdVal * 100).toFixed(0)}% (${modeText})`;
+    }
+
+    // Update Hub Jewel glow
+    const hubJewel = document.getElementById('hubJewel');
+    if (hubJewel) {
+        hubJewel.setAttribute('fill', data.badge_color || '#10b981');
     }
 
     // Status Badge
@@ -305,6 +424,7 @@ function renderAssessmentResults(data) {
         statusPill.textContent = currentLang === 'bn' ? data.badge_bn : data.badge_en;
         statusPill.style.backgroundColor = data.badge_color;
         statusPill.style.color = '#ffffff';
+        statusPill.style.boxShadow = `0 6px 20px ${data.badge_color}55`;
     }
 
     // Drivers
